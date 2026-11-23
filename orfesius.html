@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orfesius — Conexão Profissional & Serviços</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- TELA DE CARREGAMENTO GLOBAL (Encobre carregamento inicial da página) -->
+    <div id="global-loader" class="loading-overlay">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h2 class="brand-loader">Orfesius</h2>
+            <p data-i18n="loading_site">Carregando plataforma...</p>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <span class="logo-icon">◆</span>
+                <h1>Orfesius</h1>
+            </div>
+
+            <div class="nav-actions">
+                <div class="lang-badge" title="Idioma detectado pelo navegador">
+                    🌐 <span id="detected-lang-label">PT</span>
+                </div>
+
+                <!-- Botões quando deslogado -->
+                <div id="guest-actions" class="auth-buttons">
+                    <button class="btn btn-outline" id="btn-open-login" data-i18n="btn_login">Entrar</button>
+                    <button class="btn btn-primary" id="btn-open-register" data-i18n="btn_register">Criar Conta</button>
+                </div>
+
+                <!-- Botões quando logado -->
+                <div id="user-actions" class="auth-buttons hidden">
+                    <span id="user-greeting" class="user-greeting"></span>
+                    <button class="btn btn-outline" id="btn-open-inbox" data-i18n="btn_messages">Mensagens</button>
+                    <button class="btn btn-danger" id="btn-logout" data-i18n="btn_logout">Sair</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEÇÃO PRINCIPAL -->
+    <main class="container main-content">
+        <section class="hero">
+            <h2 data-i18n="hero_title">Encontre Profissionais, Empresas e Prestadores de Serviços</h2>
+            <p data-i18n="hero_subtitle">Conecte-se diretamente e troque mensagens em tempo real com especialistas locais ou remotos.</p>
+
+            <!-- Barra de Pesquisa e Filtros -->
+            <div class="filter-bar">
+                <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="Buscar por nome, área de atuação ou endereço...">
+
+                <select id="filter-type">
+                    <option value="" data-i18n="filter_all_types">Todos os perfis</option>
+                    <option value="profissional" data-i18n="role_profissional">Profissional</option>
+                    <option value="empresa" data-i18n="role_empresa">Empresa</option>
+                    <option value="prestador" data-i18n="role_prestador">Prestador de Serviços</option>
+                </select>
+
+                <select id="filter-modality">
+                    <option value="" data-i18n="filter_all_modalities">Todas modalidades</option>
+                    <option value="remoto" data-i18n="mod_remoto">Remoto</option>
+                    <option value="presencial" data-i18n="mod_presencial">Presencial</option>
+                    <option value="hibrido" data-i18n="mod_hibrido">Híbrido</option>
+                </select>
+
+                <button class="btn btn-primary" id="btn-search" data-i18n="btn_filter">Filtrar</button>
+            </div>
+        </section>
+
+        <!-- LISTAGEM DE PERFIS COM TELA DE CARREGAMENTO PRÓPRIA -->
+        <section class="directory-section">
+            <div id="profiles-loader" class="section-loader hidden">
+                <div class="spinner small"></div>
+                <p data-i18n="loading_profiles">Carregando perfis...</p>
+            </div>
+
+            <div id="profiles-grid" class="profiles-grid"></div>
+        </section>
+    </main>
+
+    <!-- MODAL DE LOGIN E CADASTRO -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-card">
+            <button class="modal-close" id="close-auth-modal">&times;</button>
+
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-login" data-i18n="btn_login">Entrar</button>
+                <button class="tab-btn" id="tab-register" data-i18n="btn_register">Criar Conta</button>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label data-i18n="label_email">E-mail</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_password">Senha</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <div id="login-error" class="form-error hidden"></div>
+                <button type="submit" class="btn btn-primary full-width" data-i18n="btn_login">Entrar</button>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="register-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label data-i18n="label_account_type">Tipo de Conta</label>
+                    <select id="reg-tipo" required>
+                        <option value="cliente" data-i18n="role_cliente">Cliente</option>
+                        <option value="profissional" data-i18n="role_profissional">Profissional</option>
+                        <option value="empresa" data-i18n="role_empresa">Empresa</option>
+                        <option value="prestador" data-i18n="role_prestador">Prestador de Serviços</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="label-nome" data-i18n="label_fullname">Nome Completo</label>
+                    <input type="text" id="reg-nome" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_email">E-mail</label>
+                        <input type="email" id="reg-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_password">Senha</label>
+                        <input type="password" id="reg-senha" minlength="4" required>
+                    </div>
+                </div>
+
+                <!-- Campo específico: Cliente -->
+                <div class="form-group field-cliente">
+                    <label data-i18n="label_age">Idade</label>
+                    <input type="number" id="reg-idade" min="1" max="130">
+                </div>
+
+                <!-- Campo específico: Profissional e Prestador -->
+                <div class="form-group field-cpf hidden">
+                    <label data-i18n="label_cpf">CPF</label>
+                    <input type="text" id="reg-cpf" placeholder="000.000.000-00">
+                </div>
+
+                <!-- Campo específico: Empresa -->
+                <div class="form-group field-cnpj hidden">
+                    <label data-i18n="label_cnpj">CNPJ</label>
+                    <input type="text" id="reg-cnpj" placeholder="00.000.000/0000-00">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_phone">Número de Telefone</label>
+                        <input type="text" id="reg-telefone" required placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_address">Endereço</label>
+                        <input type="text" id="reg-endereco" required>
+                    </div>
+                </div>
+
+                <!-- Campos específicos: Profissional, Empresa e Prestador -->
+                <div class="field-work hidden">
+                    <div class="form-group">
+                        <label data-i18n="label_area">Área de Atuação (sem acentos e sem maiúsculas)</label>
+                        <input type="text" id="reg-area" autocomplete="off" data-i18n-placeholder="placeholder_area" placeholder="ex: desenvolvimento de software">
+                        <small id="area-warning" class="field-hint-warning hidden" data-i18n="area_rule_warn">
+                            Acentos e letras maiúsculas são removidos automaticamente.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_modality">Modalidade de Serviço</label>
+                        <select id="reg-modalidade">
+                            <option value="remoto" data-i18n="mod_remoto">Remoto</option>
+                            <option value="presencial" data-i18n="mod_presencial">Presencial</option>
+                            <option value="hibrido" data-i18n="mod_hibrido">Híbrido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-error" class="form-error hidden"></div>
+                <button type="submit" class="btn btn-primary full-width" data-i18n="btn_submit_register">Finalizar Cadastro</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE MENSAGENS (CHAT) -->
+    <div id="chat-modal" class="modal hidden">
+        <div class="modal-card chat-card">
+            <button class="modal-close" id="close-chat-modal">&times;</button>
+
+            <div class="chat-layout">
+                <!-- Lista de conversas recentes -->
+                <aside class="chat-sidebar">
+                    <h3 data-i18n="chat_conversations">Conversas</h3>
+                    <div id="contacts-list" class="contacts-list"></div>
+                </aside>
+
+                <!-- Área da conversa ativa -->
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <h3 id="chat-recipient-name" data-i18n="chat_select">Selecione um contato</h3>
+                        <span id="chat-recipient-role" class="badge"></span>
+                    </div>
+
+                    <div class="chat-messages-wrapper">
+                        <!-- Tela de carregamento das mensagens -->
+                        <div id="chat-loader" class="section-loader hidden">
+                            <div class="spinner small"></div>
+                            <p data-i18n="loading_messages">Carregando mensagens...</p>
+                        </div>
+
+                        <div id="chat-messages" class="chat-messages"></div>
+                    </div>
+
+                    <form id="chat-form" class="chat-input-area hidden">
+                        <input type="text" id="chat-input" data-i18n-placeholder="chat_placeholder" placeholder="Digite sua mensagem..." required>
+                        <button type="submit" class="btn btn-primary" data-i18n="btn_send">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
